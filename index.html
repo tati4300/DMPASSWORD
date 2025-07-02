@@ -28,35 +28,36 @@
   <div id="result"></div>
 
   <script>
-async function submitPassword() {
-  const password = document.getElementById("password").value;
-  const resultDiv = document.getElementById("result");
+    async function submitPassword() {
+      const password = document.getElementById("password").value;
+      const resultDiv = document.getElementById("result");
 
-  if (!password) {
-    resultDiv.textContent = "請輸入密碼";
-    return;
-  }
+      if (!password) {
+        resultDiv.textContent = "請輸入密碼";
+        return;
+      }
 
-  resultDiv.textContent = "驗證中...";
+      resultDiv.textContent = "驗證中...";
 
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbxY7kV94lg2zcrR_iqFHpoeXc5WSpFBLb3gYPvUhD5hDHniDXt8_I7rSwf569LmREbdkA/exec';
-  const url = `${scriptURL}?password=${encodeURIComponent(password)}`;
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbxY7kV94lg2zcrR_iqFHpoeXc5WSpFBLb3gYPvUhD5hDHniDXt8_I7rSwf569LmREbdkA/exec';
+      const url = `${scriptURL}?password=${encodeURIComponent(password)}`;
 
-  try {
-    const response = await fetch(url);
-    const result = await response.json();
+      try {
+        const response = await fetch(url);
+        const result = await response.json();
 
-    if (result.success) {
-      resultDiv.textContent = "✅ 驗證成功，歡迎進入！";
-    } else {
-      resultDiv.textContent = "❌ 密碼錯誤";
+        if (result.success) {
+          // 驗證成功，設定 localStorage 並跳轉
+          localStorage.setItem("verified", "true");
+          window.location.href = "https://toxin1119.github.io/DM2/";
+        } else {
+          resultDiv.textContent = "❌ 密碼錯誤";
+        }
+      } catch (err) {
+        resultDiv.textContent = "⚠️ 驗證失敗";
+        console.error(err);
+      }
     }
-  } catch (err) {
-    resultDiv.textContent = "⚠️ 驗證失敗";
-    console.error(err);
-  }
-}
-
   </script>
 </body>
 </html>
