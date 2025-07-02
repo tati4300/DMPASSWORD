@@ -40,7 +40,7 @@
       resultDiv.textContent = "驗證中...";
       try {
         const response = await fetch(
-          'YOUR_WEB_APP_URL', // ← 請替換成你部署後的 Apps Script 網址
+          'https://script.google.com/macros/s/AKfycbznC_r4gjingA4nbcVV2KH4coKTKmNyTnWswyJFNbzsX93FbljCkIU7waCHKR2fUgR1cQ/exec', // ← 請替換成你部署後的 Apps Script 網址
           {
             method: 'POST',
             body: JSON.stringify({ password }),
