@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>內容驗證頁面</title>
+  <title>大地興設備電子DM</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -19,12 +19,35 @@
       margin-top: 1rem;
       font-weight: bold;
     }
+    .lang-group {
+      margin: 1.5rem 0 0.5rem 0;
+      font-size: 1.1em;
+    }
+    .lang-group label {
+      margin: 0 1.5em 0 0.5em;
+      cursor: pointer;
+    }
+    .lang-group {
+    display: inline-block;
+    border: 2px solid #4CAF50;
+    border-radius: 12px;
+    padding: 16px 32px;
+    background: #f6fff6;
+    }
   </style>
 </head>
 <body>
   <img src="LOGO.png" alt="LOGO" style="width:120px;display:block;margin:0 auto 1.5rem auto;">
-  <h2>請輸入存取密碼</h2>
-  <input type="password" id="password" placeholder="請輸入密碼" />
+  <h2>大地興設備電子DM</h2>
+
+  <div class="lang-group" style="display:inline-block; border:2px solid #4CAF50; border-radius:12px; padding:16px 32px; background:#f6fff6;">
+    <input type="radio" id="dm_zh" name="dm_lang" value="zh" required>
+    <label for="dm_zh">中文DM</label>
+    <input type="radio" id="dm_en" name="dm_lang" value="en" required>
+    <label for="dm_en">English DM</label>
+  </div>
+    <h2>請輸入存取密碼</h2>
+  <input type="password" id="password" placeholder="請輸入密碼;Please enter password" />
   <button onclick="submitPassword()">送出</button>
   <div id="result"></div>
 
@@ -32,9 +55,14 @@
     async function submitPassword() {
       const password = document.getElementById("password").value;
       const resultDiv = document.getElementById("result");
+      const lang = document.querySelector('input[name="dm_lang"]:checked');
 
       if (!password) {
-        resultDiv.textContent = "請輸入密碼";
+        resultDiv.textContent = "請輸入密碼;Please enter password";
+        return;
+      }
+      if (!lang) {
+        resultDiv.textContent = "請選擇DM語言;Please select DM language";
         return;
       }
 
@@ -50,7 +78,11 @@
         if (result.success) {
           // 驗證成功，設定 localStorage 並跳轉
           localStorage.setItem("verified", "true");
-          window.location.href = "https://tati4300.github.io/DM/";
+          if (lang.value === "zh") {
+            window.location.href = "https://tati4300.github.io/DM/";
+          } else {
+            window.location.href = "https://tati4300.github.io/DM/dm_en.html";
+          }
         } else {
           resultDiv.textContent = "❌ 密碼錯誤";
         }
