@@ -1,116 +1,67 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>網頁內容驗證</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f4f4f4;
-            margin: 0;
-        }
-        .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        input[type="password"] {
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            width: 200px;
-            font-size: 16px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #message {
-            color: red;
-            margin-top: 10px;
-        }
-        #protectedContent {
-            display: none; /* 預設隱藏 */
-            margin-top: 20px;
-            border-top: 1px solid #eee;
-            padding-top: 20px;
-            text-align: left;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>內容驗證頁面</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      text-align: center;
+    }
+    input, button {
+      padding: 0.5rem;
+      font-size: 1rem;
+      margin: 0.5rem;
+    }
+    #result {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h2>請輸入密碼</h2>
-        <input type="password" id="passwordInput" placeholder="請輸入密碼">
-        <button onclick="checkPassword()">送出</button>
-        <div id="message"></div>
+  <h2>請輸入存取密碼</h2>
+  <input type="password" id="password" placeholder="請輸入密碼" />
+  <button onclick="submitPassword()">送出</button>
+  <div id="result"></div>
 
-        <div id="protectedContent">
-            <h3>歡迎進入！</h3>
-            <p>這是受保護的網頁內容。只有輸入正確密碼後才能看到。</p>
-            <p>這裡可以放置你的機密資訊、連結或其他內容。</p>
-        </div>
-    </div>
+  <script>
+    async function submitPassword() {
+      const password = document.getElementById("password").value;
+      const resultDiv = document.getElementById("result");
 
-    <script>
-        // 將 YOUR_WEB_APP_URL_HERE 替換為你的 Google Apps Script 網路應用程式 URL
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyxMD_ipqYSMkuxJQsSOjQHMttEuPFNU86cpf0KLOxeI_po0_Y5bv2HnvWdMezWUpa-Ew/exec';
+      if (!password) {
+        resultDiv.textContent = "請輸入密碼";
+        return;
+      }
 
-        async function checkPassword() {
-            const password = document.getElementById('passwordInput').value;
-            const messageDiv = document.getElementById('message');
-            const protectedContentDiv = document.getElementById('protectedContent');
-
-            messageDiv.textContent = ''; // 清除之前的訊息
-
-            if (!password) {
-                messageDiv.textContent = '請輸入密碼！';
-                return;
+      resultDiv.textContent = "驗證中...";
+      try {
+        const response = await fetch(
+          'YOUR_WEB_APP_URL', // ← 請替換成你部署後的 Apps Script 網址
+          {
+            method: 'POST',
+            body: JSON.stringify({ password }),
+            headers: {
+              'Content-Type': 'application/json'
             }
+          }
+        );
 
-            try {
-                const response = await fetch(WEB_APP_URL, {
-                    method: 'POST',
-                    mode: 'cors', // 啟用 CORS
-                    headers: {
-                        'Content-Type': 'text/plain', // Apps Script 通常處理 text/plain
-                    },
-                    body: password // 直接將密碼作為請求體發送
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    // 密碼正確，隱藏密碼輸入區，顯示保護內容
-                    document.querySelector('.container h2').style.display = 'none';
-                    document.getElementById('passwordInput').style.display = 'none';
-                    document.querySelector('button').style.display = 'none';
-                    messageDiv.style.display = 'none';
-                    protectedContentDiv.style.display = 'block';
-                } else {
-                    messageDiv.textContent = result.message || '密碼錯誤，請重試！';
-                }
-            } catch (error) {
-                console.error('Fetch error:', error);
-                messageDiv.textContent = '發生錯誤，請稍後再試。';
-            }
+        const result = await response.json();
+        if (result.success) {
+          resultDiv.textContent = "✅ 驗證成功，歡迎進入！";
+          // 可在此載入其他內容或跳轉
+        } else {
+          resultDiv.textContent = "❌ 密碼錯誤，請再試一次";
         }
-    </script>
+      } catch (err) {
+        resultDiv.textContent = "⚠️ 系統錯誤，請稍後再試";
+        console.error(err);
+      }
+    }
+  </script>
 </body>
 </html>
